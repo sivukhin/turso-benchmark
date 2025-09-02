@@ -460,7 +460,7 @@ func main() {
 		TURSO_DB_NAME = runName
 	}
 
-	url := fmt.Sprintf("libsql://%v.turso.io?authToken=%v", TURSO_META_NAME, TURSO_AUTH_TOKEN)
+	url := fmt.Sprintf("libsql://%v-%v.turso.io?authToken=%v", TURSO_META_NAME, TURSO_ORG_NAME, TURSO_AUTH_TOKEN)
 	meta, err := sql.Open("libsql", url)
 	if err != nil {
 		log.Fatalf("failed to open meta db %s: %s", url, err)
@@ -473,7 +473,7 @@ func main() {
 	}
 	log.Printf("initialized meta database")
 
-	url = fmt.Sprintf("libsql://%v.turso.io?authToken=%v", TURSO_DB_NAME, TURSO_AUTH_TOKEN)
+	url = fmt.Sprintf("libsql://%v-%v.turso.io?authToken=%v", TURSO_DB_NAME, TURSO_ORG_NAME, TURSO_AUTH_TOKEN)
 	db, err := sql.Open("libsql", url)
 	if err != nil {
 		log.Fatalf("failed to open db %s: %s", url, err)
