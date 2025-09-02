@@ -15,6 +15,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 FROM debian:bookworm-slim
 
+# Install unzip and cargo in the runtime image
+RUN apt-get update && apt-get install -y --no-install-recommends unzip cargo \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY --from=cert /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/turso-benchmark turso-benchmark
 
