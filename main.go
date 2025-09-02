@@ -423,15 +423,6 @@ func UploadProfile(db *sql.DB, table string, benchmark string, path string) erro
 
 func main() {
 	log.Printf("start benchmark")
-	if TURSO_DB_NAME == "" {
-		runName := fmt.Sprintf("benchmark-%v-%v", BENCHMARK_REVISION, time.Now().Unix())
-		err := CreateDatabase(runName)
-		if err != nil {
-			log.Fatalf("failed to create database: %v", err)
-		}
-		TURSO_DB_NAME = runName
-	}
-
 	info := HostStat()
 	log.Printf("host stat: %+v", info)
 	archive := fmt.Sprintf("%v.zip", BENCHMARK_REVISION)
@@ -459,6 +450,15 @@ func main() {
 	}
 	turso := path.Join(revision, "target", "release", "tursodb")
 	sqlite := "sqlite3"
+
+	if TURSO_DB_NAME == "" {
+		runName := fmt.Sprintf("benchmark-%v-%v", BENCHMARK_REVISION, time.Now().Unix())
+		err := CreateDatabase(runName)
+		if err != nil {
+			log.Fatalf("failed to create database: %v", err)
+		}
+		TURSO_DB_NAME = runName
+	}
 
 	url := fmt.Sprintf("libsql://%v.turso.io?authToken=%v", TURSO_META_NAME, TURSO_AUTH_TOKEN)
 	meta, err := sql.Open("libsql", url)

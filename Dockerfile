@@ -16,10 +16,11 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM debian:bookworm-slim
 
 # Install unzip and cargo in the runtime image
-RUN apt-get update && apt-get install -y --no-install-recommends unzip cargo \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y build-essential curl
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 COPY --from=cert /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/turso-benchmark turso-benchmark
 
-CMD ["./turso-benchmark"]
+CMD ["/bin/bash", "-l", "-c", "/turso-benchmark"]
