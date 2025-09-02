@@ -258,7 +258,7 @@ func EvalTpch(tpch string, binary string, query string, args ...string) (TpchRes
 	if err := ClearCaches(); err != nil {
 		log.Printf("failed to clear fs caches: %v", err)
 	}
-	cmd := exec.Command("time", append(append([]string{"-p", binary, tpch}, args...), query)...)
+	cmd := exec.Command("bash", append(append([]string{"-c", "time", "-p", binary, tpch}, args...), query)...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return TpchResult{}, err
