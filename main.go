@@ -238,7 +238,7 @@ func ClearCaches() error {
 		if err := exec.Command("sync").Run(); err != nil {
 			return err
 		}
-		if err := exec.Command("sh", "-c", "echo 3 | sudo tee /proc/sys/vm/drop_caches").Run(); err != nil {
+		if err := exec.Command("sh", "-c", "echo 3 > /proc/sys/vm/drop_caches").Run(); err != nil {
 			return err
 		}
 		return nil
@@ -258,7 +258,7 @@ func EvalTpch(tpch string, binary string, query string, args ...string) (TpchRes
 	if err := ClearCaches(); err != nil {
 		log.Printf("failed to clear fs caches: %v", err)
 	}
-	cmd := exec.Command("bash", append(append([]string{"-c", "time", "-p", binary, tpch}, args...), query)...)
+	cmd := exec.Command("bash", "-c", fmt.Sprintf("time -p %v %v %v \"%v\"", binary, tpch, strings.Join(args, " "), query))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return TpchResult{}, err
