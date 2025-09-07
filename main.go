@@ -438,7 +438,11 @@ func main() {
 	}
 	err = BuildTurso(revision, "release")
 	if err != nil {
-		log.Fatalf("failed build turso: %v", err)
+		log.Fatalf("failed build release turso: %v", err)
+	}
+	err = BuildTurso(revision, "bench-profile")
+	if err != nil {
+		log.Fatalf("failed build bench-profile turso: %v", err)
 	}
 	err = DownloadTpch(tpch)
 	if err != nil {
@@ -448,7 +452,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load queries: %v", err)
 	}
-	turso := path.Join(revision, "target", "release", "tursodb")
+	tursoRelease := path.Join(revision, "target", "release", "tursodb")
+	tursoBench := path.Join(revision, "target", "bench-profile", "tursodb")
 	sqlite := "sqlite3"
 
 	if TURSO_DB_NAME == "" {
@@ -487,28 +492,28 @@ func main() {
 
 	for _, query := range queries {
 		results, err := EvalTpchAttempts(BENCHMARK_ATTEMPTS, func() (TpchResult, error) {
-			return EvalTpch(tpch, turso, query.Query, "--quiet", "--output-mode", "list")
+			return EvalTpch(tpch, tursoRelease, query.Query, "--quiet", "--output-mode", "list")
 		})
 		if err != nil {
-			log.Fatalf("failed to evaluate results for %v: %v", turso, err)
+			log.Fatalf("failed to evaluate results for %v: %v", tursoRelease, err)
 		}
-		log.Printf("evaluated results: %v %v", turso, results)
+		log.Printf("evaluated results: %v %v", tursoRelease, results)
 
 		benchmark := filepath.Base(query.Path)
 		err = UpdateResultsDb(db, "turso_tpch", benchmark, results)
 		if err != nil {
 			log.Fatalf("failed to update turso results: %v", err)
 		}
-		log.Printf("updated results: %v", turso)
+		log.Printf("updated results: %v", tursoRelease)
 
-		profile := fmt.Sprintf("%v-%v-%v", filepath.Base(turso), benchmark, time.Now().Unix())
+		profile := fmt.Sprintf("%v-%v-%v", filepath.Base(tursoRelease), benchmark, time.Now().Unix())
 		profileJson := fmt.Sprintf("%v.json.gz", profile)
 		profileSym := fmt.Sprintf("%v.json.syms.json", profile)
-		err = RecordTpchProfile(tpch, profileJson, turso, query.Query, "--quiet", "--output-mode", "list")
+		err = RecordTpchProfile(tpch, profileJson, tursoBench, query.Query, "--quiet", "--output-mode", "list")
 		if err != nil {
 			log.Fatalf("failed to record profile: %v", err)
 		}
-		log.Printf("recorded profile: %v %v", turso, profileJson)
+		log.Printf("recorded profile: %v %v", tursoRelease, profileJson)
 		err = UploadProfile(db, "turso_tpch_profiles", benchmark, profileJson)
 		if err != nil {
 			log.Fatalf("failed to upload profile file %v: %v", profileJson, err)
