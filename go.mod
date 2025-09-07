@@ -1,8 +1,13 @@
 module turso-benchmark
 
-go 1.24.5
+go 1.24
 
-require github.com/shirou/gopsutil/v3 v3.24.5
+toolchain go1.24.5
+
+require (
+	github.com/shirou/gopsutil/v3 v3.24.5
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
+)
 
 require (
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
@@ -13,7 +18,6 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/sys v0.20.0 // indirect
