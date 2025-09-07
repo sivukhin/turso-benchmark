@@ -1,4 +1,4 @@
-module turso-benchmark
+module github.com/sivukhin/turso-benchmark
 
 go 1.24
 
