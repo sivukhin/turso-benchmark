@@ -45,6 +45,19 @@ func (b *Benchmark) clearCachesIfNeeded() error {
 	return clearCaches()
 }
 
+func (b *Benchmark) setParanoid() error {
+	switch runtime.GOOS {
+	case "linux":
+		if err := exec.Command("sh", "-c", "echo '1' | sudo tee /proc/sys/kernel/perf_event_paranoid").Run(); err != nil {
+			return err
+		}
+		return nil
+	case "darwin":
+		return nil
+	}
+	return fmt.Errorf("unable to set paranoid for platform '%v'", runtime.GOOS)
+}
+
 func (b *Benchmark) runCmd(args []string) ([]string, error) {
 	cmd := exec.Command(args[0], args[1:]...)
 	output, err := cmd.CombinedOutput()
@@ -102,6 +115,11 @@ func (b *Benchmark) ProfileCmd(args []string) ([]string, error) {
 	final = append(final, args...)
 
 	err := b.clearCachesIfNeeded()
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.setParanoid()
 	if err != nil {
 		return nil, err
 	}
