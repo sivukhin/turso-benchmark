@@ -1,4 +1,2 @@
 .env
-TPC-H.*
-6086b79c
-*.zip
+.runner
