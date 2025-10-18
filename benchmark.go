@@ -21,7 +21,7 @@ func clearCaches() error {
 		if err := exec.Command("sync").Run(); err != nil {
 			return err
 		}
-		if err := exec.Command("sudo", "sh", "-c", "echo 3 > /proc/sys/vm/drop_caches").Run(); err != nil {
+		if err := exec.Command("sh", "-c", "echo 3 | sudo tee /proc/sys/vm/drop_caches").Run(); err != nil {
 			return err
 		}
 		return nil
