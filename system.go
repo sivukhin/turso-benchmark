@@ -301,10 +301,10 @@ func (s *System) ExecuteBenchmark(
 		})
 	}
 	for i := 1; i < len(runnerLines); i++ {
-		if !query.IgnoreOutput && slices.Equal(runnerLines[0].lines, runnerLines[i].lines) {
+		if !query.MatchOnlyCount && slices.Equal(runnerLines[0].lines, runnerLines[i].lines) {
 			continue
 		}
-		if query.IgnoreOutput && len(runnerLines[0].lines) == len(runnerLines[i].lines) {
+		if query.MatchOnlyCount && len(runnerLines[0].lines) == len(runnerLines[i].lines) {
 			continue
 		}
 		err := fmt.Errorf(

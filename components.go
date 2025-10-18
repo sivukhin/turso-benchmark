@@ -1,9 +1,9 @@
 package main
 
 type Query struct {
-	Name         string
-	Query        string
-	IgnoreOutput bool
+	Name           string
+	Query          string
+	MatchOnlyCount bool
 }
 
 type Dataset interface {

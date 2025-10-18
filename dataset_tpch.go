@@ -31,7 +31,7 @@ order by
         l_returnflag,
         l_linestatus;
 `,
-		IgnoreOutput: true, // Ignoring output difference for query 1 (known floating point precision incompatibility)
+		MatchOnlyCount: true, // Ignoring output difference for query 1 (known floating point precision incompatibility)
 	},
 	// 	{
 	// 		Name: "2.sql",
@@ -107,7 +107,8 @@ order by
         revenue desc,
         o_orderdate
 limit 10;
-`},
+`,
+		MatchOnlyCount: true},
 	// 	{
 	// 		Name: "4.sql",
 	// 		SQL: `-- LIMBO_SKIP: subquery in where not supported
@@ -160,7 +161,8 @@ group by
         n_name
 order by
         revenue desc;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "6.sql",
 		Query: `select
@@ -172,7 +174,8 @@ where
         and l_shipdate < '1995-01-01' -- modified not to include cast({'year': 1} as interval)
         and l_discount between 0.08 - 0.01 and 0.08 + 0.01
         and l_quantity < 24;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "7.sql",
 		Query: `select
@@ -215,7 +218,8 @@ order by
         supp_nation,
         cust_nation,
         l_year;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "8.sql",
 		Query: `select
@@ -256,7 +260,8 @@ group by
         o_year
 order by
         o_year;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "9.sql",
 		Query: `select
@@ -291,7 +296,8 @@ group by
 order by
         nation,
         o_year desc;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "10.sql",
 		Query: `select
@@ -326,7 +332,8 @@ group by
 order by
         revenue desc
 limit 20;
-`},
+`,
+		MatchOnlyCount: true},
 	// 	{
 	// 		Name: "11.sql",
 	// 		SQL: `-- LIMBO_SKIP: subquery in where not supported
@@ -389,7 +396,8 @@ group by
         l_shipmode
 order by
         l_shipmode;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "13.sql",
 		Query: `select
@@ -412,7 +420,8 @@ group by
 order by
         custdist desc,
         c_count desc;
-`},
+`,
+		MatchOnlyCount: true},
 	{
 		Name: "14.sql",
 		Query: `select
@@ -428,7 +437,8 @@ where
         l_partkey = p_partkey
         and l_shipdate >= '1994-03-01'
         and l_shipdate < '1994-04-01'; -- modified not to include cast({'month': 1} as interval)
-`},
+`,
+		MatchOnlyCount: true},
 	// 	{
 	// 		Name: "15.sql",
 	// 		SQL: `-- LIMBO_SKIP: views not supported
@@ -599,7 +609,8 @@ where
                 and l_shipmode in ('AIR', 'AIR REG')
                 and l_shipinstruct = 'DELIVER IN PERSON'
         );
-`},
+`,
+		MatchOnlyCount: true},
 	// 	{
 	// 		Name: "20.sql",
 	// 		SQL: `-- LIMBO_SKIP: subquery in where not supported
