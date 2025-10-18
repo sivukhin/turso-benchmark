@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Simple Vite JS Project</title>
+</head>
+<body>
+    <style>
+        #benchmarks {
+            font-size: 16pt;
+            display: flex;
+            font-family: monospace;
+            flex-direction: column;
+        }
+        button {
+            font-size: 16pt;
+            margin: 8pt;
+            border: 1px solid black;
+            width: 128pt;
+            padding: 8pt;
+        }
+        .caption {
+            width: 128pt;
+            padding: 8pt;
+            border: 1px dotted black;
+        }
+        .group {
+            display: flex;
+            margin: 8pt;             
+        }
+        .branch {
+            margin: 8pt;
+        }
+        #container {
+            font-size: 12pt;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+        }
+        #compare {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        table {
+            margin: 8pt;
+            border-collapse: collapse;
+            letter-spacing: 1px;
+        }
+        td, th {
+            border: 2px solid gray;
+            padding: 8px 10px;
+        }
+        .win {
+            background-color: rgba(0, 128, 0, 0.5)
+        }
+        .loose {
+            background-color: rgba(128, 0, 0, 0.5)
+        }
+    </style>
+    <script type="module" src="compare.js"></script>
+    <div id="benchmarks">
+        <div id="compare">
+            <div id="first">
+            </div>
+            <div id="second">
+            </div>
+        </div>
+        <table id="results">
+        <thead>
+        <tr>
+            <th>benchmark</th>
+            <th>mean</th>
+            <th>med.</th>
+            <th>cmp</th>
+            <th>med.</th>
+            <th>mean</th>
+        </tr>
+        </thead>
+        </table>
+
+        <table id="baseline">
+        <thead>
+        <tr>
+            <th>benchmark</th>
+            <th>mean</th>
+            <th>med.</th>
+            <th>cmp</th>
+            <th>med.</th>
+            <th>mean</th>
+        </tr>
+        </thead>
+        </table>
+    </div>
+</body>
+</html>

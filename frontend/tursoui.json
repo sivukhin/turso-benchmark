@@ -1,0 +1,23 @@
+{
+    "pages": {
+        "/": {
+            "source": "./index.html",
+            "bindings": {}
+        },
+        "/compare/:b1/:b2": {
+            "source": "./compare.html",
+            "bindings": {
+                "first": ":b1",
+                "second": ":b2"
+            }
+        }
+    },
+    "components": {
+        "benchmark-list": {
+            "source": "./benchmark-list.js"
+        },
+        "benchmark-compare": {
+            "source": "./benchmark-compare.js"
+        }
+    }
+}

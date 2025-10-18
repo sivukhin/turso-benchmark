@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Simple Vite JS Project</title>
+    <script type="module">
+        import { BenchmarkList } from "./benchmark-list.js";
+        import { BenchmarkRow } from "./benchmark-row.js";
+        import { attach, setup } from "./db.js";
+        await setup("turso-benchmarks");
+        await attach("meta", "meta.db", "https://meta-sivukhin.aws-eu-north-1.turso.io");
+        customElements.define('benchmark-list', BenchmarkList);
+        customElements.define('benchmark-row', BenchmarkRow);
+    </script>
+</head>
+<body>
+    <style>
+        body {
+            font-family: monospace;
+        }
+    </style>
+    <div>
+        <h1>turso-benchmark</h1>
+        <benchmark-list db="meta" query="SELECT * FROM benchmarks"/>
+    </div>
+</body>
+</html>
