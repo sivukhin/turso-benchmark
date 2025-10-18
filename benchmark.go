@@ -79,30 +79,31 @@ func (b *Benchmark) WarmupCmd(args []string) error {
 	return nil
 }
 
-func (b *Benchmark) RunCmd(args []string) (BenchmarkResult, []string, error) {
-	var totalTime time.Duration
+func (b *Benchmark) RunCmd(args []string) ([]BenchmarkResult, []string, error) {
 	var lines []string
+	var results []BenchmarkResult
 	for i := 0; i < b.Attempts; i++ {
 		err := b.clearCachesIfNeeded()
 		if err != nil {
-			return BenchmarkResult{}, nil, err
+			return nil, nil, err
 		}
 
 		Logger.Infof("running workload #%v/%v cmd %v", i+1, b.Attempts, args[:len(args)-1])
 
 		start := time.Now()
 		lines, err = b.runCmd(args)
-		totalTime = totalTime + time.Since(start)
+		elapsed := time.Since(start)
+
+		results = append(results, BenchmarkResult{
+			TotalTime: elapsed.Seconds(),
+			Attempts:  1,
+		})
 
 		if err != nil {
-			return BenchmarkResult{}, nil, fmt.Errorf("run #%v failed: %w", i, err)
+			return nil, nil, fmt.Errorf("run #%v failed: %w", i, err)
 		}
 	}
-	result := BenchmarkResult{
-		TotalTime: totalTime.Seconds(),
-		Attempts:  b.Attempts,
-	}
-	return result, lines, nil
+	return results, lines, nil
 }
 
 func (b *Benchmark) ProfileCmd(args []string) ([]string, error) {

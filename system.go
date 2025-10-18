@@ -274,7 +274,7 @@ func (s *System) ExecuteBenchmark(
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to warmup benchmark in runner %v for query %v: %w", runner.Name(), query.Name, err)
 		}
-		result, lines, err := s.benchmark.RunCmd(cmd)
+		local, lines, err := s.benchmark.RunCmd(cmd)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to run benchmark in runner %v for query %v: %w", runner.Name(), query.Name, err)
 		}
@@ -283,13 +283,15 @@ func (s *System) ExecuteBenchmark(
 			return nil, nil, fmt.Errorf("failed to run profile in runner %v for query %v: %w", runner.Name(), query.Name, err)
 		}
 		runnerLines = append(runnerLines, linesInfo{runner: runner.Name(), lines: lines})
-		results = append(results, BenchmarkResult{
-			Runner:    runner.Name(),
-			Dataset:   benchmark.Dataset,
-			Name:      query.Name,
-			TotalTime: result.TotalTime,
-			Attempts:  result.Attempts,
-		})
+		for _, result := range local {
+			results = append(results, BenchmarkResult{
+				Runner:    runner.Name(),
+				Dataset:   benchmark.Dataset,
+				Name:      query.Name,
+				TotalTime: result.TotalTime,
+				Attempts:  result.Attempts,
+			})
+		}
 
 		profiles = append(profiles, BenchmarkProfile{
 			Runner:  runner.Name(),
