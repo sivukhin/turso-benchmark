@@ -166,7 +166,7 @@ func (s *Storage) Parameters(db *sql.DB) (map[string]string, error) {
 }
 
 func (s *Storage) WrittenQueries(db *sql.DB, benchmark BenchmarkInfo, dataset string) (map[string]bool, error) {
-	rows, err := db.Query("SELECT name FROM measurements WHERE dataset = ?", dataset)
+	rows, err := db.Query("SELECT DISTINCT name FROM measurements WHERE dataset = ?", dataset)
 	if err != nil {
 		return nil, err
 	}
@@ -202,9 +202,10 @@ func (s *Storage) InitResultsDb(db *sql.DB, meta map[string]any) error {
 		dataset TEXT,
 		name TEXT,
         measurement TEXT, 
+		sample INTEGER,
         iterations REAL, 
         value REAL,
-		PRIMARY KEY (runner, dataset, name, measurement)
+		PRIMARY KEY (runner, dataset, name, measurement, sample)
     )`)
 	if err != nil {
 		return err
@@ -245,13 +246,14 @@ func (s *Storage) UpdateBenchmarkDb(db *sql.DB, results []BenchmarkResult) error
 	if err != nil {
 		return err
 	}
-	for _, result := range results {
+	for i, result := range results {
 		_, err = tx.Exec(
-			"INSERT INTO measurements VALUES (?, ?, ?, ?, ?, ?)",
+			"INSERT INTO measurements VALUES (?, ?, ?, ?, ?, ?, ?)",
 			result.Runner,
 			result.Dataset,
 			result.Name,
 			"total_time",
+			i,
 			result.Attempts,
 			result.TotalTime,
 		)
