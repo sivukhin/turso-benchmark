@@ -426,12 +426,13 @@ function BenhcmarkDiff({ delta, left, right }: { delta: DeltaPoint[], left: Grou
                 ` (${((g.leftAvg ?? 0) / (g.rightAvg ?? 0) * 100 - 100).toFixed(1)}% faster)` :
                 ` (${((g.rightAvg ?? 0) / (g.leftAvg ?? 0) * 100 - 100).toFixed(1)}% slower)`;
             }
-            const leftProfileUrl = encodeURIComponent(`http://localhost:8080/profile/${left.profiles}/${left.runner}/${g.dataset}/${g.name}/profile.json`);
-            const leftSymbolsUrl = encodeURIComponent(`http://localhost:8080/profile/${left.profiles}/${left.runner}/${g.dataset}/${g.name}`);
+            const origin = window.location.origin
+            const leftProfileUrl = encodeURIComponent(`${origin}/profile/${left.profiles}/${left.runner}/${g.dataset}/${g.name}/profile.json`);
+            const leftSymbolsUrl = encodeURIComponent(`${origin}/profile/${left.profiles}/${left.runner}/${g.dataset}/${g.name}`);
             const leftProfile = `https://profiler.firefox.com/from-url/${leftProfileUrl}/?symbolServer=${leftSymbolsUrl}`;
 
-            const rightProfileUrl = encodeURIComponent(`http://localhost:8080/profile/${right.profiles}/${right.runner}/${g.dataset}/${g.name}/profile.json`);
-            const rightSymbolsUrl = encodeURIComponent(`http://localhost:8080/profile/${right.profiles}/${right.runner}/${g.dataset}/${g.name}`);
+            const rightProfileUrl = encodeURIComponent(`${origin}/profile/${right.profiles}/${right.runner}/${g.dataset}/${g.name}/profile.json`);
+            const rightSymbolsUrl = encodeURIComponent(`${origin}/profile/${right.profiles}/${right.runner}/${g.dataset}/${g.name}`);
             const rightProfile = `https://profiler.firefox.com/from-url/${rightProfileUrl}/?symbolServer=${rightSymbolsUrl}`;
             return (
               <tr
@@ -463,7 +464,7 @@ function BenhcmarkDiff({ delta, left, right }: { delta: DeltaPoint[], left: Grou
                   {!g.hidden && <span className={rightStdColor}>{g.rightStddev?.toFixed(3)}</span>}
                 </td>
                 <td className="px-3 py-2 text-center border-b">
-                  {!g.hidden && <a href={rightProfile} className="text-blue-600 hover:underline" target="_blank">📊</a>}
+                  {!g.hidden && <a href={rightProfile} className="text-blue-600 hover:underline" target="_blank" onClick={e => e.stopPropagation()}>📊</a>}
                 </td>
                 <td className="px-3 py-2 text-left border-b">
                   {!g.hidden && <span style={{ fontWeight: weight }}>{(g.confidence * 100)?.toFixed(1)}%</span>}

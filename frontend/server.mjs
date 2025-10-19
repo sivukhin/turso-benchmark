@@ -3,9 +3,13 @@ import { spawn } from "child_process";
 import httpProxy from "http-proxy";
 import { mkdtempSync, rm, writeFileSync } from "fs";
 import { join } from "path";
-import { cwd } from "process";
+import { cwd, loadEnvFile } from "process";
 import { createServer } from "net";
+import { createReadStream, stat } from "fs";
+import { extname, resolve } from "path";
 import { connect } from "@tursodatabase/serverless";
+
+loadEnvFile()
 
 function getEphemeralPort() {
   return new Promise((resolve, reject) => {
@@ -18,6 +22,36 @@ function getEphemeralPort() {
   });
 }
 
+const distDir = resolve(cwd(), "dist");
+
+function serveStatic(req, res) {
+  const filePath = !req.url.startsWith("/asset") ? join(distDir, "index.html") : join(distDir, req.url);
+  stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Not Found");
+      return;
+    }
+    const ext = extname(filePath).toLowerCase();
+    let contentType
+    if (ext === ".js")
+      contentType = "text/javascript";
+    else if (ext === ".css")
+      contentType = "text/css";
+    else if (ext === ".json")
+      contentType = "application/json";
+    else if (ext === ".png")
+      contentType = "image/png";
+    else if (ext === ".jpg" || ext === ".jpeg")
+      contentType = "image/jpeg";
+    else
+      contentType = "text/html";
+    res.writeHead(200, { "Content-Type": contentType });
+    createReadStream(filePath).pipe(res);
+  });
+}
+
+
 const proxy = httpProxy.createProxyServer({});
 
 let samplyProcesses = [];
@@ -29,6 +63,10 @@ function url(name) {
 }
 
 const server = http.createServer(async (req, res) => {
+  if (!req.url.startsWith("/profile")) {
+    return serveStatic(req, res);
+  }
+
   const components = req.url.split('/');
 
   const prefix = components.slice(0, 6).join('/');
