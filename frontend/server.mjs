@@ -2,7 +2,7 @@ import http from "http";
 import { spawn } from "child_process";
 import httpProxy from "http-proxy";
 import { mkdtempSync, rm, writeFileSync } from "fs";
-import { join } from "path";
+import { join, normalize } from "path";
 import { cwd, loadEnvFile } from "process";
 import { createServer } from "net";
 import { createReadStream, stat } from "fs";
@@ -25,27 +25,32 @@ function getEphemeralPort() {
 const distDir = resolve(cwd(), "dist");
 
 function serveStatic(req, res) {
-  const filePath = !req.url.startsWith("/asset") ? join(distDir, "index.html") : join(distDir, req.url);
+  const ext = extname(req.url).toLowerCase();
+  let contentType = '';
+  if (ext === ".js")
+    contentType = "text/javascript";
+  else if (ext === ".css")
+    contentType = "text/css";
+  else if (ext === ".json")
+    contentType = "application/json";
+  else if (ext === ".png")
+    contentType = "image/png";
+  else if (ext === ".jpg" || ext === ".jpeg")
+    contentType = "image/jpeg";
+  else if (ext == ".html")
+    contentType = "text/html";
+  else if (ext == ".wasm")
+    contentType = "text/wasm";
+  const filePath = normalize(contentType == '' ? (req.url.startsWith('/from-url') ? join(distDir, "index.html") : join(distDir, "index-benchmark.html")) : join(distDir, req.url));
+  if (!filePath.startsWith(distDir)) {
+    throw new Error("hacker!");
+  }
   stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { "Content-Type": "text/plain" });
       res.end("Not Found");
       return;
     }
-    const ext = extname(filePath).toLowerCase();
-    let contentType
-    if (ext === ".js")
-      contentType = "text/javascript";
-    else if (ext === ".css")
-      contentType = "text/css";
-    else if (ext === ".json")
-      contentType = "application/json";
-    else if (ext === ".png")
-      contentType = "image/png";
-    else if (ext === ".jpg" || ext === ".jpeg")
-      contentType = "image/jpeg";
-    else
-      contentType = "text/html";
     res.writeHead(200, { "Content-Type": contentType });
     createReadStream(filePath).pipe(res);
   });
@@ -63,7 +68,7 @@ function url(name) {
 }
 
 const server = http.createServer(async (req, res) => {
-  if (!req.url.startsWith("/profile")) {
+  if (!req.url.startsWith("/profile/")) {
     return serveStatic(req, res);
   }
 
@@ -140,7 +145,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     req.url = `/${samplyProcess.samplyId}/${suffix}`;
-    const proxyReq = proxy.web(req, res, { target: `http://localhost:${samplyProcess.port}` });
+    const proxyReq = proxy.web(req, res, {
+      target: `http://localhost:${samplyProcess.port}`,
+    });
 
     // Kill proxy connection after timeout (useful if Samply is slow)
     const connectionTimeout = setTimeout(() => {
@@ -152,6 +159,17 @@ const server = http.createServer(async (req, res) => {
     res.on("close", () => clearTimeout(connectionTimeout));
     return;
   }
+});
+
+// Add CORS headers to the proxied response
+proxy.on("proxyRes", function (proxyRes, req, res) {
+  delete proxyRes.headers["access-control-allow-origin"];
+  delete proxyRes.headers["access-control-allow-methods"];
+  delete proxyRes.headers["access-control-allow-headers"];
+
+  proxyRes.headers["access-control-allow-origin"] = "https://profiler.firefox.com";
+  proxyRes.headers["access-control-allow-methods"] = "GET, POST, OPTIONS";
+  proxyRes.headers["access-control-allow-headers"] = "Content-Type, Authorization, X-Requested-With";
 });
 
 server.listen(8080, () => {

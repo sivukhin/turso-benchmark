@@ -5,6 +5,13 @@ export default defineConfig({
   plugins: [
     tailwindcss()
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index-benchmark.html', // Default entry point
+      },
+    },
+  },
   server: {
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
