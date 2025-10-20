@@ -319,6 +319,8 @@ function BenhcmarkDiff({ delta, left, right }: { delta: DeltaPoint[], left: Grou
     return a.name.localeCompare(b.name);
   });
 
+  delta = delta.filter(x => x.left.length > 0 && x.right.length > 0);
+
   let table: DeltaTableRow[] = [];
   for (const line of delta) {
     table.push({
