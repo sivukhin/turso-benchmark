@@ -65,6 +65,8 @@ func main() {
 		datatsets: []Dataset{
 			&DatasetClickhouse{Rows: 1000000},
 			&DatasetTpch{},
+			&DatasetVectorsDense{},
+			&DatasetVectorsSparse{},
 		},
 		benchmark: Benchmark{
 			Warmup:      2,
