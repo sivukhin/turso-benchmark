@@ -268,6 +268,17 @@ func (s *System) ExecuteBenchmark(
 	}
 	runnerLines := make([]linesInfo, 0)
 	for _, runner := range runners {
+		if len(query.Runners) > 0 && !slices.Contains(query.Runners, runner.Name()) {
+			// add fake result for now
+			results = append(results, BenchmarkResult{
+				Runner:    runner.Name(),
+				Dataset:   benchmark.Dataset,
+				Name:      query.Name,
+				TotalTime: 0,
+				Attempts:  1,
+			})
+			continue
+		}
 		Logger.Infof("running query %v/%v with runner %v", benchmark.Dataset, query.Name, runner.Name())
 		cmd := runner.RunCmd(path, query.Query)
 		err := s.benchmark.WarmupCmd(cmd)

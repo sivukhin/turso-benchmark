@@ -10,7 +10,7 @@ import (
 var queryDense string
 
 var queriesVectorsDense = []Query{
-	{Name: "0", Query: queryDense},
+	{Name: "0", Query: queryDense, Runners: []string{"turso"}},
 }
 
 type DatasetVectorsDense struct{}

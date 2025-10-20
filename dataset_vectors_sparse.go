@@ -10,7 +10,7 @@ import (
 var querySparse string
 
 var queriesVectorsSparse = []Query{
-	{Name: "0", Query: querySparse},
+	{Name: "0", Query: querySparse, Runners: []string{"turso"}},
 }
 
 type DatasetVectorsSparse struct{}

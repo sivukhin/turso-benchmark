@@ -3,6 +3,7 @@ package main
 type Query struct {
 	Name           string
 	Query          string
+	Runners        []string
 	MatchOnlyCount bool
 }
 
