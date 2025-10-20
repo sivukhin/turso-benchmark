@@ -15,7 +15,7 @@ var queriesVectorsSparse = []Query{
 
 type DatasetVectorsSparse struct{}
 
-func (d *DatasetVectorsSparse) Name() string { return "vectors-dense" }
+func (d *DatasetVectorsSparse) Name() string { return "vectors-sparse" }
 func (d *DatasetVectorsSparse) Load(path string) ([]Query, error) {
 	if _, err := os.Stat(path); err == nil {
 		Logger.Infof("dataset %v already exists, skip initialization", d.Name())
